@@ -1,0 +1,46 @@
+# VoiceNav Configuration
+
+app:
+  name: VoiceNav
+  version: 0.1.0
+  description: Voice-controlled browser automation for macOS
+
+voice:
+  wake_word: "Hey Maya"
+  timeout: 5
+  language: en-US
+  recognizer: whisper  # REVERTED: Using working Whisper system (not enhanced)
+  whisper_model: base  # Options: tiny, base, small, medium, large
+
+tts:
+  engine: pyttsx3
+  rate: 150
+  volume: 1.0
+
+browser:
+  default: chrome
+  headless: false
+  timeout: 30
+
+commands:
+  - name: open
+    description: "Open a URL (e.g., 'open google')"
+  - name: click
+    description: "Click an element by description"
+  - name: scroll
+    description: "Scroll up or down"
+  - name: back
+    description: "Go back in browser history"
+  - name: forward
+    description: "Go forward in browser history"
+  - name: read
+    description: "Read page content aloud"
+  - name: refresh
+    description: "Refresh the current page"
+  - name: stop
+    description: "Stop VoiceNav"
+
+logging:
+  level: INFO
+  file: voicenav.log
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

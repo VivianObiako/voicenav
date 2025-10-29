@@ -1,0 +1,212 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                        START HERE - EVERY SESSION                           ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+🎯 YOUR WORKFLOW (FOLLOW THIS EVERY TIME YOU CODE)
+═════════════════════════════════════════════════════════════════════════════
+
+BEFORE YOU START:
+  1. [ ] cd ~/Github/Personal/voicenav
+  2. [ ] source venv/bin/activate
+  3. [ ] tail -30 DEVLOG.md          (see what was last done)
+  4. [ ] python3 tests/test_environment.py  (verify setup)
+
+DURING YOUR WORK:
+  1. [ ] Write code / fix bugs / add features
+  2. [ ] Run tests frequently
+  3. [ ] Document your decisions as you go
+
+WHEN YOU FINISH:
+  1. [ ] Update DEVLOG.md
+     
+     Copy this template and fill it:
+     
+     #### [What You Did]
+     **Date**: $(date +%Y-%m-%d)
+     **Time**: $(date +%H:%M)
+     **Status**: ✅ Complete
+     
+     **What**: 
+     [1-2 sentences]
+     
+     **How**: 
+     [Commands/code you used]
+     
+     **Why**: 
+     [Why you chose this approach]
+     
+     **Files Created/Modified**: 
+     - file1.py (changes)
+     - file2.py (changes)
+     
+     **Issues Encountered**: 
+     [Any problems and how you fixed them]
+     
+     **Critical Sections**: 
+     [What NOT to remove]
+     
+     **Impact**: 
+     [What this enables next]
+     
+     **Next Steps**: 
+     [What comes after]
+     
+     **Status**: ✅ Complete
+     **Lines Added**: +XX lines
+     **Files Changed**: X files
+
+  2. [ ] Commit to git:
+     $ git add DEVLOG.md [modified files]
+     $ git commit -m "Stage X: [Brief description]"
+
+  3. [ ] Keep statistics updated in DEVLOG.md
+
+
+⚠️ CRITICAL REMINDERS
+═════════════════════════════════════════════════════════════════════════════
+
+🔴 ALWAYS UPDATE DEVLOG.md AFTER WORK
+   If you don't, you lose the history!
+
+🔴 NEVER DELETE FILES WITHOUT CHECKING DEVLOG.md
+   $ grep -i "filename" DEVLOG.md
+
+🔴 KEEP YOUR WORK COMMITTED TO GIT
+   $ git status  (should be clean)
+
+🔴 UPDATE STATISTICS AFTER EACH SESSION
+   Files: [count]
+   Lines: [count]
+   Stage: [X/4]
+
+
+📋 PROJECT COMMANDS
+═════════════════════════════════════════════════════════════════════════════
+
+Activate environment:
+  $ source venv/bin/activate
+
+Run tests:
+  $ python3 tests/test_environment.py
+
+Edit devlog:
+  $ nano DEVLOG.md
+
+Check git status:
+  $ git status
+
+Commit changes:
+  $ git add DEVLOG.md [files]
+  $ git commit -m "Message"
+
+View recent work:
+  $ tail -50 DEVLOG.md
+
+Check critical files:
+  $ grep "Do Not Delete" DEVLOG.md
+
+
+📍 PROJECT LOCATION
+═════════════════════════════════════════════════════════════════════════════
+
+Main: ~/Github/Personal/voicenav
+Full: /Users/vivianobiako/Github/Personal/voicenav
+
+
+📚 KEY FILES
+═════════════════════════════════════════════════════════════════════════════
+
+DEVLOG.md              ← THE MOST IMPORTANT FILE
+                       Everything you do goes here!
+
+README.md              ← Project overview
+SETUP_GUIDE.md         ← Setup instructions
+INDEX.md               ← Documentation guide
+
+src/main.py            ← Main application entry
+src/utils/logger.py    ← Logging system
+
+tests/test_environment.py  ← Environment validation
+requirements.txt       ← Dependencies to install
+config.yaml            ← Application configuration
+
+
+🚀 QUICK SETUP (First Time)
+═════════════════════════════════════════════════════════════════════════════
+
+1. Install Python 3.11+
+   $ brew install python@3.11
+
+2. Install portaudio
+   $ brew install portaudio
+
+3. Create virtual environment
+   $ cd ~/Github/Personal/voicenav
+   $ python3.11 -m venv venv
+   $ source venv/bin/activate
+
+4. Install dependencies
+   $ pip install -r requirements.txt
+
+5. Grant microphone permissions
+   → System Preferences → Security & Privacy → Microphone
+
+6. Test environment
+   $ python3 tests/test_environment.py
+
+7. Start working!
+   → Add work to DEVLOG.md
+   → Follow workflow above
+
+
+📊 CURRENT PROJECT STATUS
+═════════════════════════════════════════════════════════════════════════════
+
+Stage: 0/4 (100% Complete)
+Files: 17
+Lines: 2,498
+Documentation: 1,810 lines
+Status: ✅ Ready for Stage 1
+
+
+✅ WHAT TO DO NOW
+═════════════════════════════════════════════════════════════════════════════
+
+BEFORE Stage 1:
+
+  [ ] Follow SETUP_GUIDE.md to setup Python 3.11+ environment
+  [ ] Run: python3 tests/test_environment.py
+  [ ] Verify all tests pass
+  [ ] Grant microphone permissions
+
+THEN Stage 1:
+
+  [ ] Review DEVLOG.md "What's Next" section
+  [ ] Begin Voice Input System implementation
+  [ ] Update DEVLOG.md as you go
+  [ ] Test frequently
+  [ ] Commit changes
+
+REMEMBER:
+  ✓ Every step gets logged in DEVLOG.md
+  ✓ No work is undone or forgotten
+  ✓ Complete project history maintained
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+FINAL RULE:
+
+  1. Do work
+  2. Update DEVLOG.md
+  3. Commit to git
+  4. Move forward
+
+NO EXCEPTIONS!
+
+═════════════════════════════════════════════════════════════════════════════
+Created: 2024-10-29
+Read this file before EVERY work session!
+═════════════════════════════════════════════════════════════════════════════
