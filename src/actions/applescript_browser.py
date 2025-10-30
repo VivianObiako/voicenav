@@ -23,30 +23,99 @@ class AppleScriptBrowserController:
     Controls web browser through AppleScript for voice commands
     
     Features:
-    - Native macOS browser control (Safari/Chrome)
+    - Native macOS browser control (Safari/Chrome/Arc/Edge/Firefox)
+    - Auto-detects default browser or uses specified browser
     - Uses your existing browser, not a separate process
     - Maya voice feedback for all actions
     - Cross-browser compatibility
     - Lightweight and reliable
     """
     
-    def __init__(self, browser_app="Safari"):
+    def __init__(self, browser_app="auto"):
         """
         Initialize AppleScript browser controller
         
         Args:
-            browser_app (str): Browser to control ("Safari" or "Google Chrome")
+            browser_app (str): Browser to control:
+                - "auto": Auto-detect default browser
+                - "Safari": Force Safari
+                - "Google Chrome": Force Chrome
+                - "Arc": Force Arc browser
+                - "Microsoft Edge": Force Edge
+                - "Firefox": Force Firefox
         """
         self.browser_app = browser_app
         self.is_initialized = False
         self.current_url = None
         
-        # Validate browser choice
-        if browser_app not in ["Safari", "Google Chrome"]:
-            logger.warning(f"Unknown browser: {browser_app}, defaulting to Safari")
-            self.browser_app = "Safari"
+        # Auto-detect default browser if requested
+        if browser_app == "auto":
+            self.browser_app = self._detect_default_browser()
+            logger.info(f"Auto-detected default browser: {self.browser_app}")
+        else:
+            # Validate browser choice
+            supported_browsers = [
+                "Safari", "Google Chrome", "Arc", "Microsoft Edge", "Firefox"
+            ]
+            if browser_app not in supported_browsers:
+                logger.warning(f"Unknown browser: {browser_app}, auto-detecting default")
+                self.browser_app = self._detect_default_browser()
         
         logger.info(f"AppleScriptBrowserController initialized for {self.browser_app}")
+    
+    def _detect_default_browser(self) -> str:
+        """
+        Detect the user's default web browser on macOS
+        
+        Returns:
+            str: Browser application name
+        """
+        try:
+            # Get default browser using LaunchServices
+            script = '''
+            tell application "System Events"
+                set defaultBrowser to get name of default application of (info for (POSIX file "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/public.html"))
+            end tell
+            return defaultBrowser
+            '''
+            
+            result = subprocess.run(
+                ['osascript', '-e', script],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            
+            if result.returncode == 0:
+                browser_name = result.stdout.strip()
+                logger.info(f"System default browser: {browser_name}")
+                
+                # Map common browser names to AppleScript names
+                browser_mapping = {
+                    "Safari": "Safari",
+                    "Google Chrome": "Google Chrome", 
+                    "Chrome": "Google Chrome",
+                    "Arc": "Arc",
+                    "Microsoft Edge": "Microsoft Edge",
+                    "Edge": "Microsoft Edge",
+                    "Firefox": "Firefox",
+                    "Brave Browser": "Brave Browser"
+                }
+                
+                # Find matching browser
+                for key, value in browser_mapping.items():
+                    if key.lower() in browser_name.lower():
+                        return value
+                
+                # If no match found, try the name as-is
+                return browser_name
+            
+        except Exception as e:
+            logger.warning(f"Could not detect default browser: {e}")
+        
+        # Fallback to Safari
+        logger.info("Falling back to Safari")
+        return "Safari"
     
     async def initialize(self) -> bool:
         """
@@ -102,10 +171,16 @@ class AppleScriptBrowserController:
             # Use macOS built-in 'say' command with Samantha voice (Maya's voice)
             subprocess.run(['say', '-v', 'Samantha', text], check=True)
             logger.info(f"Maya spoke: {text}")
+            
+            # CRITICAL FIX: Add pause after Maya speaks to prevent feedback loop
+            # This prevents the voice listener from picking up Maya's own voice
+            time.sleep(1.5)  # Wait for Maya's voice to finish
+            
         except subprocess.CalledProcessError:
             # Fallback to default voice
             try:
                 subprocess.run(['say', text], check=True)
+                time.sleep(1.5)  # Pause even with fallback
             except:
                 print(f"🔊 Maya would say: {text}")
         except Exception as e:
@@ -166,21 +241,13 @@ class AppleScriptBrowserController:
         try:
             logger.info(f"Opening URL: {url}")
             
-            # AppleScript to open URL
-            if self.browser_app == "Safari":
-                script = f'''
-                tell application "Safari"
-                    activate
-                    open location "{url}"
-                end tell
-                '''
-            else:  # Google Chrome
-                script = f'''
-                tell application "Google Chrome"
-                    activate
-                    open location "{url}"
-                end tell
-                '''
+            # AppleScript to open URL (supports multiple browsers)
+            script = f'''
+            tell application "{self.browser_app}"
+                activate
+                open location "{url}"
+            end tell
+            '''
             
             success, output, error = self._run_applescript(script)
             

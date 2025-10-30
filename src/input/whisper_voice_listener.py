@@ -237,18 +237,26 @@ class WhisperVoiceListener:
             logger.error(f"Audio recording failed: {e}")
             return None
     
-    def _transcribe_audio(self, audio_file_path):
+    def _transcribe_audio(self, audio_file_path, force_english=True):
         """
         Transcribe audio file using Whisper
         
         Args:
             audio_file_path (str): Path to audio file
+            force_english (bool): Force English language detection
             
         Returns:
             str: Transcribed text (lowercase)
         """
         try:
-            result = self.whisper_model.transcribe(audio_file_path)
+            # Force English language to prevent Korean/other language detection
+            transcribe_options = {
+                "language": "english" if force_english else None,
+                "task": "transcribe",
+                "fp16": False  # Prevent FP16 warnings on CPU
+            }
+            
+            result = self.whisper_model.transcribe(audio_file_path, **transcribe_options)
             text = result["text"].strip().lower()
             logger.debug(f"Whisper transcription: '{text}'")
             return text
@@ -286,13 +294,28 @@ class WhisperVoiceListener:
                     if text:
                         print(f"🎤 Heard: '{text}'")
                         
-                        # Check for wake word (allow variations)
-                        wake_variations = [
-                            "hey maya", "hey maia", "a maya", "hey maria",
-                            "maya", "maia", "maria"
+                        # IMPROVED WAKE WORD DETECTION: More strict filtering
+                        # Filter out Maya's own responses and system feedback
+                        text_clean = text.strip().lower()
+                        
+                        # Skip if this sounds like Maya's own voice feedback
+                        skip_phrases = [
+                            "i can open", "try saying", "help to see", "commands",
+                            "scroll down", "scroll up", "available commands",
+                            "i'm listening", "maya spoke", "executed successfully"
                         ]
                         
-                        if any(wake in text for wake in wake_variations):
+                        if any(skip in text_clean for skip in skip_phrases):
+                            logger.debug(f"Skipping Maya's own voice: '{text}'")
+                            continue
+                        
+                        # Check for wake word (stricter matching)
+                        wake_variations = [
+                            "hey maya", "hey maia", "a maya", "hey maria"
+                        ]
+                        
+                        # Must contain wake word AND be short enough to not be a command response
+                        if any(wake in text_clean for wake in wake_variations) and len(text_clean) < 30:
                             logger.info(f"Wake word detected in: '{text}'")
                             print(f"✅ Maya detected!")
                             return True
@@ -397,8 +420,17 @@ class WhisperVoiceListener:
                 self._speak("I'm listening")
                 print("🎤 Maya heard you! Say your command:")
                 
+                # CRITICAL FIX: Wait for Maya's voice to finish before listening
+                time.sleep(2.5)  # Allow Maya's "I'm listening" to complete
+                
                 # Listen for command
                 command = self._listen_for_command()
+                
+                # CRITICAL FIX: Add pause after processing to prevent feedback loop
+                if command and command.get('raw_text'):
+                    # Add delay after command processing before resuming listening
+                    time.sleep(2.0)
+                
                 return command
             
             return None

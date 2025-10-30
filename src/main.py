@@ -64,9 +64,9 @@ class VoiceNavApp:
             self.parser = CommandParser()
             print("✅ Command parser ready!")
             
-            # Initialize browser controller (Stage 2) - AppleScript
-            print("🌐 Initializing Safari browser controller...")
-            self.browser = AppleScriptBrowserController("Safari")
+            # Initialize browser controller (Stage 2) - Auto-detect default browser
+            print("🌐 Initializing browser controller...")
+            self.browser = AppleScriptBrowserController("auto")
             browser_ready = await self.browser.initialize()
             
             if not browser_ready:
