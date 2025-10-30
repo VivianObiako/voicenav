@@ -125,7 +125,9 @@ def main():
     print("• Maya wake word detection") 
     print("• Whisper AI recognition (without complex thresholds)")
     print("• Audio feedback (Samantha voice)")
-    print("• Complete Stage 1 validation")
+    print("• Stage 1: Voice Input System validation")
+    print("• Stage 2: Command Parser & Browser Control")
+    print("• Stage 3: Menu Bar UI & Complete Application")
     
     print(f"\n📍 Current directory: {os.getcwd()}")
     print(f"🐍 Python version: {sys.version}")
@@ -143,7 +145,11 @@ def main():
         ("test_maya_whisper.py", "Maya + Whisper Test", "REVERTED - Original working system", 180, True),
         ("tests/test_voice.py", "Full Voice Test", "3-round comprehensive test", 300, True),
         ("test_maya_voice.py", "Voice Integration", "Audio feedback validation", 120, True),
-        ("test_original_maya.py", "Original Maya Test", "Test reverted working system", 120, True)
+        ("test_original_maya.py", "Original Maya Test", "Test reverted working system", 120, True),
+        ("tests/test_parser.py", "Command Parser Test", "Stage 2 command parsing validation", 60, False),
+        ("test_applescript_browser.py", "Browser Control Test", "Stage 2 AppleScript browser automation", 90, False),
+        ("tests/test_ui.py", "UI Components Test", "Stage 3 UI module validation", 60, False),
+        ("test_stage3.py", "Stage 3 Complete Test", "Menu bar UI & complete application", 180, False)
     ]
     
     # Pre-flight check

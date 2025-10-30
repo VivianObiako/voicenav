@@ -13,14 +13,21 @@ voice:
   whisper_model: base  # Options: tiny, base, small, medium, large
 
 tts:
-  engine: pyttsx3
+  engine: macos_say  # Use macOS built-in 'say' command (working system)
+  voice: Samantha    # Maya's voice personality
   rate: 150
   volume: 1.0
 
 browser:
-  default: chrome
-  headless: false
+  default: auto      # Auto-detect default browser
+  method: applescript # Use AppleScript (working on M3 Mac)
   timeout: 30
+
+ui:
+  show_notifications: true
+  auto_start: false
+  minimize_to_tray: true
+  icon_style: emoji
 
 commands:
   - name: open

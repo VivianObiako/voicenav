@@ -2,6 +2,12 @@
 VoiceNav Main Application
 Entry point for the voice-controlled browser automation system
 Integrates Maya voice assistant with browser control
+
+Usage:
+    python main.py              # Command-line mode
+    python main.py --menu-bar   # Menu bar mode (Stage 3)
+    python main.py --settings   # Settings panel
+    python main.py --help       # Show help
 """
 
 import sys
@@ -10,6 +16,7 @@ import asyncio
 import threading
 import queue
 import signal
+import argparse
 from datetime import datetime
 
 # Add src directory to path for imports
@@ -237,9 +244,36 @@ async def main():
         print(f"❌ Application error: {e}")
 
 
+def run_menu_bar():
+    """Run VoiceNav in menu bar mode (Stage 3)"""
+    try:
+        from src.ui.menu_bar import VoiceNavMenuBar
+        app = VoiceNavMenuBar()
+        app.run()
+    except ImportError:
+        print("❌ Menu bar mode requires rumps. Install with: pip install rumps")
+    except Exception as e:
+        print(f"❌ Menu bar error: {e}")
+        logger.error(f"Menu bar error: {e}")
+
+
+def run_settings():
+    """Run VoiceNav settings panel"""
+    try:
+        from src.ui.settings_panel import VoiceNavSettingsPanel
+        panel = VoiceNavSettingsPanel()
+        panel.run()
+    except ImportError as e:
+        print("❌ Settings panel requires tkinter and PyYAML. Install with: pip install PyYAML")
+        print(f"ImportError: {e}")
+    except Exception as e:
+        print(f"❌ Settings error: {e}")
+        logger.error(f"Settings error: {e}")
+
+
 def run_voicenav():
     """
-    Synchronous entry point for VoiceNav
+    Synchronous entry point for VoiceNav command-line mode
     Handles the async main loop
     """
     try:
@@ -251,5 +285,68 @@ def run_voicenav():
         logger.error(f"Fatal error: {e}")
 
 
+def parse_args():
+    """Parse command line arguments"""
+    parser = argparse.ArgumentParser(
+        description="VoiceNav - Voice-Controlled Browser Automation",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python main.py                # Run in command-line mode
+  python main.py --menu-bar     # Run with menu bar interface (Stage 3)
+  python main.py --settings     # Open settings panel
+  
+VoiceNav Commands:
+  "Hey Maya, open google"       # Navigate to website
+  "Hey Maya, click login"       # Click page element
+  "Hey Maya, scroll down"       # Scroll page
+  "Hey Maya, go back"           # Browser back button
+  "Hey Maya, help"              # List all commands
+"""
+    )
+    
+    parser.add_argument(
+        '--menu-bar', 
+        action='store_true',
+        help='Run VoiceNav with menu bar interface (Stage 3)'
+    )
+    
+    parser.add_argument(
+        '--settings',
+        action='store_true', 
+        help='Open VoiceNav settings panel'
+    )
+    
+    parser.add_argument(
+        '--version',
+        action='version',
+        version='VoiceNav 0.1.0 - Maya AI Assistant'
+    )
+    
+    return parser.parse_args()
+
+
+def main_entry():
+    """Main entry point with argument parsing"""
+    try:
+        args = parse_args()
+        
+        if args.settings:
+            print("🔧 Opening VoiceNav settings...")
+            run_settings()
+        elif args.menu_bar:
+            print("📱 Starting VoiceNav menu bar...")
+            run_menu_bar()
+        else:
+            print("💻 Starting VoiceNav command-line mode...")
+            run_voicenav()
+            
+    except KeyboardInterrupt:
+        print("\n👋 Goodbye!")
+    except Exception as e:
+        print(f"❌ Startup error: {e}")
+        logger.error(f"Startup error: {e}")
+
+
 if __name__ == "__main__":
-    run_voicenav()
+    main_entry()
